@@ -1,0 +1,115 @@
+#!/bin/bash
+
+function abort
+{
+    REASON=$1
+
+    if ! [ "$REASON" == "" ];
+    then
+        echo "$REASON"
+    fi
+
+    echo ""
+
+    exit 1
+}
+
+
+function boxify_exec
+{
+    EXEC=$1
+    LAUNCHER=$2
+    EXEC_FILENAME=$(basename $EXEC)
+    BOXIFIED_SCRIPTS_PATH="$HOME/.local/bin/boxify"
+
+    if ! [ -d "${BOXIFIED_SCRIPTS_PATH}" ];
+    then
+        mkdir -p "${BOXIFIED_SCRIPTS_PATH}"
+
+        if [ -f "$HOME/.environment" ];
+        then
+            echo "export PATH=\$PATH:${BOXIFIED_SCRIPTS_PATH}" >> "$HOME/.environment"
+        else
+            echo "export PATH=\$PATH:${BOXIFIED_SCRIPTS_PATH}" >> "$HOME/.bashrc"
+        fi
+    fi
+
+    SCRIPT="${BOXIFIED_SCRIPTS_PATH}/${EXEC_FILENAME}"
+
+    if [ -f "$SCRIPT" ];
+    then
+        echo "ERROR: Failed boxifing '${EXEC}'."
+        echo "       An script '${SCRIPT}' already exists."
+        echo ""
+        exit 1
+    fi
+
+    echo "#!/bin/bash" > "$SCRIPT"
+    echo "" >> "$SCRIPT"
+    echo "${LAUNCHER} $EXEC \$*" >> "$SCRIPT"
+    echo "" >> "$SCRIPT"
+
+    chmod +x "$SCRIPT"
+
+    echo "'${EXEC}' boxified with '${LAUNCHER}' in '${SCRIPT}'."
+    echo ""
+}
+
+
+function usage
+{
+    echo "Usage: boxify <executable file>"
+    echo ""
+    echo "Creates an script in /usr/local/bin that executes the file"
+    echo "with Box86 or Box64, depending of the architecture of the"
+    echo "executable."
+    echo ""
+}
+
+
+if [ "$1" == "" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ];
+then
+    usage
+    exit 1
+fi
+
+
+
+
+EXEC=$1
+FILE_TYPE=$(file -L "$EXEC")
+
+echo ${FILE_TYPE} | grep "ELF 32-bit" > /dev/null
+LINUX_X86=$?
+
+echo ${FILE_TYPE} | grep "ELF 64-bit" > /dev/null
+LINUX_X64=$?
+
+
+if [ "$LINUX_X86" == "0" ];
+then
+    boxify_exec "$EXEC" box86
+
+    if ! [ "/usr/local/bin/box86" ];
+    then
+        echo "WARNING: Box86 has not been detected."
+        echo "You need it for executing this script."
+    fi
+
+elif [ "$LINUX_X64" == "0" ];
+then
+    boxify_exec "$EXEC" box64
+    
+    if ! [ "/usr/local/bin/box64" ];
+    then
+        echo "WARNING: Box64 has not been detected."
+        echo "You need it for executing this script."
+    fi
+
+else
+    echo "The file '${EXEC}' isn't an Linux x86 or x86_64 executable."
+    echo ""
+
+    exit 1
+fi
+
