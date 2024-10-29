@@ -17,7 +17,7 @@ function abort
 
 ARCH=$(uname -m)
 
-if ! [[ ARCH == armv* ]] || ! [ "$ARCH" == "arm64" ];
+if ! [[ ARCH == armv* ]] && ! [ "$ARCH" == "aarch64" ];
 then
     abort "Box86 is intended for running x86 binaries in ARM platforms."
 fi
@@ -43,6 +43,18 @@ fi
 
 echo "Installing Box86..."
 echo "==================="
+
+if ! [ "/usr/bin/gpg" ];
+then
+    echo "Installing needed packages ..."
+    echo "=============================="
+    echo ""
+
+    apt update
+    apt install -y gpg wget
+
+    echo ""
+fi
 
 if ! [ -d "/usr/share/keyrings" ];
 then
@@ -81,8 +93,11 @@ fi
 
 
 dpkg --add-architecture armhf
-echo "Enabled armhf architecture in dpkg."
+dpkg --add-architecture i386
 
+echo "Enabled armhf and i386 architectures to dpkg."
+
+echo ""
 echo "Updating APT sources..."
 echo "======================="
 echo ""
