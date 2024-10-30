@@ -91,10 +91,10 @@ then
 fi
 
 
-dpkg --add-architecture armhf
+
 dpkg --add-architecture i386
 
-echo "Enabled armhf and i386 architectures to dpkg."
+echo "Enabled i386 architecture in dpkg."
 
 echo ""
 echo "Updating APT sources..."
@@ -112,6 +112,15 @@ if ! [ "$?" == "0" ];
 then
     echo ""
     abort "Failed installing."
+fi
+
+
+echo "export PATH=\$PATH:\$HOME/scripts" >> "$HOME/.environment"
+grep .environment $HOME/.bashrc > /dev/null
+
+if ! [ "$?" == "0" ];
+then
+    echo "source \$HOME/.environment" >> $HOME/.bashrc
 fi
 
 echo ""

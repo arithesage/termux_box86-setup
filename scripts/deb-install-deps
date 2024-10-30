@@ -62,15 +62,17 @@ fi
 
 cd "$DEB_DOWNLOADS"
 
-echo "Checking dependencies of ${PACKAGE}) ..."
+echo "Checking dependencies of ${PACKAGE} ..."
 
 for dep in $(deb-deps ${PACKAGE});
 do
     if [[ $dep == *lib* ]];
     then
+        echo ""
         echo "Installing ${dep}:${ARCH} ..."
         echo "======================================="
         apt install ${dep}:${ARCH}
+
     else
         echo "Downloading ${dep} ..."
         echo "================================"
