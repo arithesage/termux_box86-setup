@@ -51,7 +51,7 @@ then
     echo ""
 
     apt update
-    apt install -y gpg wget
+    apt install -y gpg python3 python-is-python3 wget
 
     echo ""
 fi
