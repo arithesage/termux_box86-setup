@@ -45,7 +45,7 @@ fi
 
 PACKAGE=$1
 
-APP_NAME=$(echo "$PACKAGE" | cut -d '_' -f 1)
+APP_NAME=$(basename $PACKAGE | cut -d '_' -f 1)
 INSTALL_DIR="$HOME/.local/installs/${APP_NAME}"
 
 if ! [ -d "$INSTALL_DIR" ];

@@ -17,7 +17,7 @@ function abort
 
 ARCH=$(uname -m)
 
-if ! [[ ARCH == armv* ]] && ! [ "$ARCH" == "aarch64" ];
+if ! [[ $ARCH == armv* ]] && ! [ "$ARCH" == "aarch64" ];
 then
     abort "Box86 is intended for running x86 binaries in ARM platforms."
 fi
@@ -44,11 +44,10 @@ fi
 echo "Installing Box86..."
 echo "==================="
 
-if ! [ "/usr/bin/gpg" ];
+if ! [ -f "/usr/bin/gpg" ];
 then
     echo "Installing needed packages ..."
     echo "=============================="
-    echo ""
 
     apt update
     apt install -y gpg python3 python-is-python3 wget
@@ -100,14 +99,12 @@ echo "Enabled armhf and i386 architectures to dpkg."
 echo ""
 echo "Updating APT sources..."
 echo "======================="
-echo ""
 
 apt update
 
 echo ""
 echo "Installing libc6 and ${BOX86} ..."
 echo "================================="
-echo ""
 
 apt install -y libc6:armhf ${BOX86}
 
@@ -119,4 +116,5 @@ fi
 
 echo ""
 echo "Finished!"
+echo ""
 

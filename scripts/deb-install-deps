@@ -7,8 +7,8 @@ function usage
     echo "Search the required dependencies for the given package and"
     echo "install them with it."
     echo ""
-    echo "Only those dependencies that are not system libraries will be"
-    echo "installed."
+    echo "Those dependencies that are system libraries will be installed"
+    echo "with the current system architecture."
     echo ""
 }
 
@@ -41,6 +41,20 @@ PACKAGE=$1
 DEB_DOWNLOADS="$HOME/.local/deb-downloads"
 DEB_INSTALLS="$HOME/.local/installs"
 
+
+ARCH=$(uname -m)
+
+if [[ $ARCH == armv* ]];
+then
+    ARCH="armhf"
+elif [ "$ARCH" == "aarch64" ]];
+then
+    ARCH="arm64"
+else
+    abort "This script is intended to be used in ARM devices."
+fi
+
+
 if ! [ -d "$DEB_DOWNLOADS" ];
 then
     mkdir -p "$DEB_DOWNLOADS"
@@ -48,12 +62,16 @@ fi
 
 cd "$DEB_DOWNLOADS"
 
-echo "Checking dependencies of ${PACKAGE} (libs are skipped) ..."
+echo "Checking dependencies of ${PACKAGE}) ..."
 
 for dep in $(deb-deps ${PACKAGE});
 do
-    if ! [[ $dep == *lib* ]];
+    if [[ $dep == *lib* ]];
     then
+        echo "Installing ${dep}:${ARCH} ..."
+        echo "======================================="
+        apt install ${dep}:${ARCH}
+    else
         echo "Downloading ${dep} ..."
         echo "================================"
         apt download $dep
