@@ -40,14 +40,14 @@ else
     BOX86="box86-generic-arm"
 fi
 
-
+echo "==================="
 echo "Installing Box86..."
 echo "==================="
 
 if ! [ -f "/usr/bin/gpg" ];
 then
     echo "Installing needed packages ..."
-    echo "=============================="
+    echo "-----------------------------="
 
     apt update
     apt install -y gpg man python3 python-is-python3 wget
@@ -91,20 +91,20 @@ then
 fi
 
 
-
+dpkg --add-architecture armhf
 dpkg --add-architecture i386
 
-echo "Enabled i386 architecture in dpkg."
+echo "Enabled armhf and i386 architectures in dpkg."
 
 echo ""
 echo "Updating APT sources..."
-echo "======================="
+echo "-----------------------"
 
 apt update
 
 echo ""
 echo "Installing libc6 and ${BOX86} ..."
-echo "================================="
+echo "---------------------------------"
 
 apt install -y libc6:armhf ${BOX86}
 
