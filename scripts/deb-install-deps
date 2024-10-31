@@ -84,7 +84,7 @@ do
         echo ""
         echo "Installing ${dep}:${PACKAGE_ARCH} ..."
         echo "======================================="
-        apt install ${dep}:${PACKAGE_ARCH}
+        apt install -y ${dep}:${PACKAGE_ARCH}
 
     else
         echo "Downloading ${dep} ..."
