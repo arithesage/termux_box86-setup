@@ -128,10 +128,19 @@ if __name__ == "__main__":
 
     deps_string = exec (cmdline, capture_output=True).stdout
     deps_entries = deps_string.split("\n ")
+    entries_num = len (deps_entries)
 
-    for entry in deps_entries:
-        if entry.strip().startswith("Depends:"):
-            dep = entry.strip().split()[1]
+    for e in range (0, entries_num):
+        dep = None
+
+        # Needed in case a dependency is a virtual package
+        if deps_entries[e].strip().startswith ("Depends: <"):
+            dep = deps_entries[e+1].strip()
+
+        elif deps_entries[e].strip().startswith ("Depends:"):
+            dep = deps_entries[e].strip().split()[1]
+        
+        if (dep != None):
             package_deps.append (dep)
 
     for dep in package_deps:
