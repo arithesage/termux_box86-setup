@@ -41,7 +41,7 @@ else
 fi
 
 echo "==================="
-echo "Installing Box86..."
+echo "--- Box86 setup ---"
 echo "==================="
 
 if ! [ -f "/usr/bin/gpg" ];
@@ -105,7 +105,7 @@ apt update
 
 echo ""
 echo "Installing libc6 and ${BOX86} ..."
-echo "---------------------------------"
+echo "--------------------------------------"
 
 apt install -y libc6:armhf ${BOX86}
 
@@ -117,6 +117,8 @@ fi
 
 
 echo "export PATH=\$PATH:\$HOME/scripts" >> "$HOME/.environment"
+echo "export PATH=\$PATH:\$HOME/.local/bin" >> "$HOME/.environment"
+
 grep .environment $HOME/.bashrc > /dev/null
 
 if ! [ "$?" == "0" ];
