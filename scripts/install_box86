@@ -47,9 +47,10 @@ echo "==================="
 if ! [ -f "/usr/bin/gpg" ];
 then
     echo "Installing needed packages ..."
-    echo "-----------------------------="
+    echo "------------------------------"
 
     apt update
+    apt install -y dialog
     apt install -y gpg man python3 python-is-python3 wget
 
     echo ""

@@ -8,7 +8,7 @@ function usage
     echo "install them with it."
     echo ""
     echo "Those dependencies that are system libraries will be installed"
-    echo "with the current system architecture."
+    echo "for armhf or arm64, depending of the package architecture."
     echo ""
 }
 
@@ -38,20 +38,32 @@ fi
 
 
 PACKAGE=$1
+PACKAGE_FILENAME=$(basename $1)
 DEB_DOWNLOADS="$HOME/.local/deb-downloads"
 DEB_INSTALLS="$HOME/.local/installs"
 
 
-ARCH=$(uname -m)
+echo "$PACKAGE_FILENAME" | grep i386 > /dev/null
 
-if [[ $ARCH == armv* ]];
+if [ "$?" == "0" ];
 then
-    ARCH="armhf"
-elif [ "$ARCH" == "aarch64" ]];
-then
-    ARCH="arm64"
+    PACKAGE_ARCH="armhf"
 else
-    abort "This script is intended to be used in ARM devices."
+    echo "$PACKAGE_FILENAME" | grep amd64 > /dev/null
+
+    if [ "$?" == "0" ];
+    then
+        PACKAGE_ARCH="arm64"
+    else
+        echo "$PACKAGE_FILENAME" | grep aarch64 > /dev/null
+
+        if [ "$?" == "0" ];
+        then
+            PACKAGE_ARCH="arm64"
+        else
+            PACKAGE_ARCH="armhf"
+        fi
+    fi
 fi
 
 
@@ -69,9 +81,9 @@ do
     if [[ $dep == *lib* ]];
     then
         echo ""
-        echo "Installing ${dep}:${ARCH} ..."
+        echo "Installing ${dep}:${PACKAGE_ARCH} ..."
         echo "======================================="
-        apt install ${dep}:${ARCH}
+        apt install ${dep}:${PACKAGE_ARCH}
 
     else
         echo "Downloading ${dep} ..."
